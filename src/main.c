@@ -1,9 +1,0 @@
-
-#include "libft.h"
-
-int main(void)
-{
-    ft_printf("hello world!\n");
-
-    return (0);
-}

@@ -6,7 +6,7 @@
 #    By: abourbou <abourbou@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/11 11:01:57 by abourbou          #+#    #+#              #
-#    Updated: 2024/01/17 23:11:17 by abourbou         ###   ########lyon.fr    #
+#    Updated: 2024/02/03 21:45:56 by abourbou         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,7 +50,7 @@ SRC_LIBFT	= 	ft_atoi.c  ft_strdup.c ft_bzero.c \
 	 			ft_memmove.c ft_strnstr.c ft_itoa.c ft_memset.c \
 				ft_strrchr.c  ft_putchar_fd.c ft_strtrim.c  ft_putendl_fd.c \
 				ft_substr.c  ft_putnbr_fd.c ft_tolower.c  ft_putstr_fd.c \
-				ft_toupper.c  ft_split.c ft_strchr.c \
+				ft_toupper.c  ft_split.c ft_split_del.c ft_strchr.c \
 				ft_lstmap_bonus.c ft_lstnew_bonus.c ft_lstsize_bonus.c \
 				ft_lstadd_back_bonus.c ft_lstadd_front_bonus.c \
 				ft_lstclear_bonus.c ft_lstdelone_bonus.c ft_lstiter_bonus.c \

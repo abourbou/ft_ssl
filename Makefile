@@ -31,13 +31,14 @@ PATH_LIBFT	=	./libft
 
 # Source
 SRC			=	$(addprefix $(PATH_SRC)/, \
-				main.c \
+				ft_ssl.c \
+				utils.c \
 				)
 
 OBJ			=	$(addprefix $(PATH_OBJ)/, $(SRC:.c=.o))
 
 # Headers
-INC_FILES	=
+INC_FILES	= utils.h
 
 INC			=	$(addprefix $(PATH_INC)/, $(INC_FILES))
 
