@@ -33,14 +33,15 @@ PATH_LIBFT	=	./libft
 # Source
 SRC			=	$(addprefix $(PATH_SRC)/, \
 				ft_ssl.c ft_ssl_commands.c utils.c \
-				$(addprefix commands/, help.c) \
+				$(addprefix commands/, help.c \
+				digest.c md5.c) \
 				)
 
 OBJ			=	$(addprefix $(PATH_OBJ)/, $(SRC:.c=.o))
 
 # Headers
 INC_FILES	=	ft_ssl.h utils.h \
-				$(addprefix commands/, help.h)
+				$(addprefix commands/, help.h digest.h)
 
 INC			=	$(addprefix $(PATH_INC)/, $(INC_FILES))
 

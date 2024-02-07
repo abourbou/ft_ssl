@@ -2,12 +2,14 @@
 #include "utils.h"
 #include "ft_ssl.h"
 #include "help.h"
+#include "digest.h"
 
 static const t_command g_commands[] = {
     // Commands
     {"help", "command", parser_help, free_help, exec_help},
 
     // Message digest commands
+    {"md5", "digest", parser_digest, free_digest, exec_md5},
     // Cipher commands
 };
 
