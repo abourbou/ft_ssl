@@ -3,7 +3,7 @@
 NAME		=	ft_ssl
 CC			=	gcc
 FLAGS		=	-Wall -Werror -Wextra -g3
-HEADER		=	-I$(PATH_INC) -I$(PATH_LIBFT)/$(PATH_INC)
+HEADER		=	-I$(PATH_INC) -I$(PATH_INC)/commands -I$(PATH_LIBFT)/$(PATH_INC)
 LIB			=	-L$(PATH_LIBFT) -lft -lm
 
 # Color Code and template code
@@ -29,16 +29,18 @@ PATH_SRC	=	src
 PATH_OBJ	=	obj
 PATH_LIBFT	=	./libft
 
+
 # Source
 SRC			=	$(addprefix $(PATH_SRC)/, \
-				ft_ssl.c \
-				utils.c ft_ssl_commands.c \
+				ft_ssl.c ft_ssl_commands.c utils.c \
+				$(addprefix commands/, help.c) \
 				)
 
 OBJ			=	$(addprefix $(PATH_OBJ)/, $(SRC:.c=.o))
 
 # Headers
-INC_FILES	= utils.h ft_ssl.h
+INC_FILES	=	ft_ssl.h utils.h \
+				$(addprefix commands/, help.h)
 
 INC			=	$(addprefix $(PATH_INC)/, $(INC_FILES))
 

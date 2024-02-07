@@ -1,10 +1,11 @@
 
 #include "utils.h"
 #include "ft_ssl.h"
+#include "help.h"
 
 static const t_command g_commands[] = {
     // Commands
-    {"template", "template_group", NULL, NULL, NULL},
+    {"help", "command", parser_help, free_help, exec_help},
 
     // Message digest commands
     // Cipher commands
