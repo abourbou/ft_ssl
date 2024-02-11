@@ -15,4 +15,8 @@ char *ft_str_mem_cpy(char *str);
 // Scan file descriptor until EOF is found (returns 0 if memory allocation fails)
 char *scan_fd(int fd);
 
+void    print_memory_bin(void *data, size_t len);
+
+void    print_memory_hex(void *data, size_t len);
+
 #endif
