@@ -13,6 +13,12 @@ void free_split(char **cmd_split)
     free(cmd_split);
 }
 
+int free_and_return(int val, void *buffer)
+{
+    free(buffer);
+    return val;
+}
+
 char *ft_str_mem_cpy(char *str)
 {
     char *copy;
@@ -22,36 +28,33 @@ char *ft_str_mem_cpy(char *str)
     return copy;
 }
 
+// Scan fd to get the whole string
 char *scan_fd(int fd)
 {
-    int ret_gnl;
-    char *stdin_str = NULL;
-    char *current_line;
+    char *fd_str = NULL;
+    char *buffer;
+    char buffer_read[UTILS_BUFF_SIZE + 1];
+    int nbr_bytes;
+
+    nbr_bytes = read(fd, buffer_read, UTILS_BUFF_SIZE);
+    if (nbr_bytes == -1)
+        return 0;
+    buffer_read[nbr_bytes] = 0;
+    if (!(fd_str = ft_str_mem_cpy(buffer_read)))
+        return 0;
 
     while (1)
     {
-        ret_gnl = get_next_line(fd, &current_line);
-        if (ret_gnl == -1)
-        {
-            if (stdin_str)
-                free(stdin_str);
+        int size = read(fd, buffer_read, UTILS_BUFF_SIZE);
+        if (size == -1)
+            free_and_return(0, fd_str);
+        else if (size == 0)
+            return fd_str;
+        buffer = ft_strjoin(fd_str, buffer_read);
+        free(fd_str);
+        if (!buffer)
             return 0;
-        }
-
-        if (stdin_str)
-        {
-            char *buffer = ft_strjoin(stdin_str, current_line);
-            free(stdin_str);
-            free(current_line);
-            if (!buffer)
-                return 0;
-            stdin_str = buffer;
-        }
-        else
-            stdin_str = current_line;
-
-        if (ret_gnl == 0)
-            return stdin_str;
+        fd_str = buffer;
     }
 }
 

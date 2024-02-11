@@ -8,7 +8,11 @@
 
 #define ERROR_PRINT(exit_status, error_msg, ...) {ft_fprintf(2, error_msg, ##__VA_ARGS__); return exit_status;}
 
+#define UTILS_BUFF_SIZE 1024
+
 void free_split(char **cmd_split);
+int free_and_return(int val, void *buffer);
+
 // Create malloc and copy the string
 char *ft_str_mem_cpy(char *str);
 

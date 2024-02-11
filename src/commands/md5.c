@@ -12,40 +12,23 @@ void init_hash_md5(uint32_t *hash)
     hash[3] = init_hash[3];
 }
 
-int free_and_return(int val, void *buffer)
+size_t add_padding_and_lengths(char *message, size_t len_input, size_t total_length)
 {
-    free(buffer);
-    return val;
-}
-
-char *add_padding_and_lengths(char *input_message, size_t *message_len)
-{
-    char *message;
-    size_t len_input = ft_strlen(input_message);
-
     // Add padding
-    size_t remainder_input = len_input % 64;
-    char padding[64] = {0};
+    static char padding[64] = {0};
     padding[0] = 0b10000000;
 
-    size_t padding_size = 0;
-    if (remainder_input >= 56)
-        padding_size = 64 - (remainder_input - 56);
-    else if (remainder_input < 56)
-        padding_size = 56 - remainder_input;
-
-    if (!(message = malloc(len_input + padding_size + 8)))
-        return 0;
-    ft_memcpy(message, input_message, len_input);
+    size_t remainder_input = len_input % 64;
+    size_t padding_size = (remainder_input >= 56)
+                        ? 64 - (remainder_input - 56)
+                        : 56 - remainder_input;
     ft_memcpy(message + len_input, padding, padding_size);
 
     // Add length number of bites
-    uint64_t lengths_bites = len_input * 8;
-
+    uint64_t lengths_bites = total_length * 8;
     ft_memcpy(message + len_input + padding_size, &lengths_bites, 8);
 
-    *message_len = len_input + padding_size + 8;
-    return message;
+    return len_input + padding_size + 8;
 }
 
 uint32_t *get_K_md5()
@@ -63,7 +46,7 @@ uint32_t *get_K_md5()
     return K;
 }
 
-uint32_t* get_shift_md5()
+uint32_t* get_S_md5()
 {
     static uint32_t S[64];
     static bool initialized = false;
@@ -104,15 +87,8 @@ uint32_t rotate_left(uint32_t x, uint32_t n)
     return (x << n) | (x >> (32 - n));
 }
 
-int    algo_md5(uint32_t *hash, char *input_message)
+int    hash_md5(uint32_t *hash, char *message, size_t message_len)
 {
-    char *message;
-    size_t  message_len;
-
-    if (!(message = add_padding_and_lengths(input_message, &message_len)))
-        return -1;
-
-    init_hash_md5(hash);
     // Break message into 512 bits chunks
     for (size_t i = 0; i < message_len / 64; ++i)
     {
@@ -144,7 +120,7 @@ int    algo_md5(uint32_t *hash, char *input_message)
 
             uint32_t M = *(uint32_t*)&message[i * 64 + g * 4];
             uint32_t K = get_K_md5()[j];
-            uint32_t S = get_shift_md5()[j];
+            uint32_t S = get_S_md5()[j];
             F = F + A + M + K;
             A = D;
             D = C;
@@ -156,52 +132,87 @@ int    algo_md5(uint32_t *hash, char *input_message)
         hash[2] += C;
         hash[3] += D;
     }
-    free(message);
     return 1;
+}
+
+// Compute md5 hash on the fd or the string
+int algo_md5(uint32_t *hash, int fd, char *str)
+{
+    init_hash_md5(hash);
+    char buffer[MD5_BUFF_SIZE];
+    size_t total_length = 0;
+
+    // String case
+    if (str)
+    {
+        int length_message = ft_strlen(str);
+        char *str_with_padding;
+        if (!(str_with_padding = malloc(length_message + 64)))
+            return -1;
+        ft_memcpy(str_with_padding, str, length_message);
+        length_message = add_padding_and_lengths(str_with_padding, length_message, length_message);
+        hash_md5(hash, str_with_padding, length_message);
+        free(str_with_padding);
+        return 1;
+    }
+
+    // Fd case : Split the input by blocks
+    while (1)
+    {
+        int length_message = read(fd, buffer, MD5_BUFF_SIZE - 64);
+        if (length_message < 0)
+            return -1;
+        total_length += length_message;
+
+        if (length_message < MD5_BUFF_SIZE - 64)
+        {
+            length_message = add_padding_and_lengths(buffer, length_message, total_length);
+            hash_md5(hash, buffer, length_message);
+            return 1;
+        }
+
+        hash_md5(hash, buffer, length_message);
+    }
 }
 
 int exec_md5(void* options)
 {
     t_digest_options *digest_options = options;
     uint32_t hash[4];
-    char *stdin_buffer;
-    // TODO add \n to the string read in scan_fd => solution line below ?
-    // TODO Later : Read input by chunk of 1024 bites and hash (usefull for very large files)
+    init_hash_md5(hash);
 
     // Read stdin if there is no arguments
     if (!digest_options->pass && !digest_options->str && !digest_options->files[0])
     {
-        if (!(stdin_buffer = scan_fd(0)))
+        if (algo_md5(hash, 0, NULL) == -1)
             return -1;
-        if (algo_md5(hash, stdin_buffer) == -1)
-            return (free_and_return(-1, stdin_buffer));
 
         digest_options->quiet   ? print_hash_newline((uint8_t*)hash, 16)
                                 : print_stdin_hash((uint8_t*)hash, 16, NULL);
-        free(stdin_buffer);
         return 1;
     }
 
     // Pass option
     if (digest_options->pass)
     {
-        if (!(stdin_buffer = scan_fd(0)))
+        char *stdin_buffer = scan_fd(0);
+        if (!stdin_buffer)
             return -1;
-        if (algo_md5(hash, stdin_buffer) == -1)
-            return (free_and_return(-1, stdin_buffer));
+
+        if (algo_md5(hash, -1, stdin_buffer) == -1)
+            return -1;
 
         if (digest_options->quiet && digest_options->pass)
             ft_printf("%s\n", stdin_buffer);
         digest_options->quiet   ? print_hash_newline((uint8_t*)hash, 16)
                                 : print_stdin_hash((uint8_t*)hash, 16, stdin_buffer);
         free(stdin_buffer);
-        stdin_buffer = NULL;
     }
 
     // String option
     if (digest_options->str)
     {
-        if (algo_md5(hash, digest_options->str) == -1)
+        if (algo_md5(hash, -1, digest_options->str) == -1)
             return -1;
 
         digest_options->quiet   ? print_hash_newline((uint8_t*)hash, 16)
@@ -219,10 +230,7 @@ int exec_md5(void* options)
             ft_fprintf(2, "%s: %s\n", digest_options->files[i], strerror(errno));
             continue;
         }
-        if (!(stdin_buffer = scan_fd(fd)))
-            return -1;
-        if (algo_md5(hash, stdin_buffer) == -1)
-            return (free_and_return(-1, stdin_buffer));
+        algo_md5(hash, fd, NULL);
 
         digest_options->quiet   ? print_hash_newline((uint8_t*)hash, 16)
                                 : print_file_hash((uint8_t*)hash, 16, "MD5", digest_options->files[i], digest_options->reverse);
