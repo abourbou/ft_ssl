@@ -68,3 +68,57 @@ void    free_digest(void *options)
     }
     free(t_options);
 }
+
+
+// Printing
+
+void print_hash(uint8_t* hash, int len)
+{
+    for (int i = 0; i < len; ++i)
+        ft_printf("%02x", hash[i]);
+}
+
+void print_hash_newline(uint8_t* hash, int len)
+{
+    print_hash(hash, len);
+    ft_printf("\n");
+}
+
+void print_stdin_hash(uint8_t* hash, int len, char *stdin)
+{
+    if (stdin)
+        ft_printf("(\"%s\")= ", stdin);
+    else
+        ft_printf("(stdin)= ");
+    print_hash_newline(hash, len);
+}
+
+void print_str_hash(uint8_t* hash, int len, char *algo, char *str, bool rev)
+{
+    if (!rev)
+    {
+        ft_printf("%s (\"%s\")= ", algo, str);
+        print_hash(hash, len);
+    }
+    if (rev)
+    {
+        print_hash(hash, len);
+        ft_printf(" \"%s\"", str);
+    }
+    ft_printf("\n");
+}
+
+void print_file_hash(uint8_t* hash, int len, char *algo, char *str, bool rev)
+{
+    if (!rev)
+    {
+        ft_printf("%s (%s) = ", algo, str);
+        print_hash(hash, len);
+    }
+    if (rev)
+    {
+        print_hash(hash, len);
+        ft_printf(" %s", algo);
+    }
+    ft_printf("\n");
+}

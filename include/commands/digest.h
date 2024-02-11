@@ -1,6 +1,8 @@
 #ifndef DIGEST_H
 # define DIGEST_H
 
+#include <stdint.h>
+
 #include "stdbool.h"
 #include "libft_core.h"
 #include "utils.h"
@@ -13,8 +15,16 @@ typedef struct s_digest_options {
     char **files;
 }   t_digest_options;
 
+// Parsing arguments
 int     parser_digest(char* cmd, int nbr_token, char **tokens, void **p_options);
 void    free_digest(void *options);
+
+// Print functions
+void print_hash(uint8_t* hash, int len);
+void print_hash_newline(uint8_t* hash, int len);
+void print_stdin_hash(uint8_t* hash, int len, char *stdin);
+void print_str_hash(uint8_t* hash, int len, char *algo, char *str, bool rev);
+void print_file_hash(uint8_t* hash, int len, char *algo, char *str, bool rev);
 
 // Digest commands
 int exec_md5(void* options);
