@@ -21,3 +21,36 @@ char *ft_str_mem_cpy(char *str)
     ft_strlcpy(copy, str, ft_strlen(str) + 1);
     return copy;
 }
+
+char *scan_fd(int fd)
+{
+    int ret_gnl;
+    char *stdin_str = NULL;
+    char *current_line;
+
+    while (1)
+    {
+        ret_gnl = get_next_line(fd, &current_line);
+        if (ret_gnl == -1)
+        {
+            if (stdin_str)
+                free(stdin_str);
+            return 0;
+        }
+
+        if (stdin_str)
+        {
+            char *buffer = ft_strjoin(stdin_str, current_line);
+            free(stdin_str);
+            free(current_line);
+            if (!buffer)
+                return 0;
+            stdin_str = buffer;
+        }
+        else
+            stdin_str = current_line;
+
+        if (ret_gnl == 0)
+            return stdin_str;
+    }
+}

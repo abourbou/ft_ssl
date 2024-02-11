@@ -2,6 +2,9 @@
 # define DIGEST_H
 
 #include <stdint.h>
+#include <string.h>
+#include <errno.h>
+#include <fcntl.h>
 
 #include "stdbool.h"
 #include "libft_core.h"
