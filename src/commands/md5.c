@@ -1,4 +1,5 @@
 
+#include <math.h>
 #include "digest.h"
 
 void init_hash_md5(uint32_t *hash)
@@ -47,6 +48,62 @@ char *add_padding_and_lengths(char *input_message, size_t *message_len)
     return message;
 }
 
+uint32_t *get_K_md5()
+{
+    static uint32_t K[64];
+    static bool initialized = false;
+
+    if (!initialized)
+    {
+        for (size_t i = 0; i < 64; ++i)
+            K[i] = (uint32_t)floor(4294967296 * fabs(sin(i + 1)));
+        initialized = true;
+    }
+
+    return K;
+}
+
+uint32_t* get_shift_md5()
+{
+    static uint32_t S[64];
+    static bool initialized = false;
+
+    if (!initialized)
+    {
+        for (int i = 0; i < 64; ++i)
+        {
+            int r_i = i % 16;
+            if (i / 16 == 0)
+                S[i] = (r_i % 4 == 0) ? 7
+                       : (r_i % 4 == 1) ? 12
+                       : (r_i % 4 == 2) ? 17
+                                        : 22;
+            else if (i / 16 == 1)
+                S[i] = (r_i % 4 == 0) ? 5
+                       : (r_i % 4 == 1) ? 9
+                       : (r_i % 4 == 2) ? 14
+                                        : 20;
+            else if (i / 16 == 2)
+                S[i] = (r_i % 4 == 0) ? 4
+                       : (r_i % 4 == 1) ? 11
+                       : (r_i % 4 == 2) ? 16
+                                        : 23;
+            else
+                S[i] = (r_i % 4 == 0) ? 6
+                       : (r_i % 4 == 1) ? 10
+                       : (r_i % 4 == 2) ? 15
+                                        : 21;
+        }
+        initialized = true;
+    }
+    return S;
+}
+
+uint32_t rotate_left(uint32_t x, uint32_t n)
+{
+    return (x << n) | (x >> (32 - n));
+}
+
 int    algo_md5(uint32_t *hash, char *input_message)
 {
     char *message;
@@ -56,7 +113,49 @@ int    algo_md5(uint32_t *hash, char *input_message)
         return -1;
 
     init_hash_md5(hash);
+    // Break message into 512 bits chunks
+    for (size_t i = 0; i < message_len / 64; ++i)
+    {
+        uint32_t A = hash[0], B = hash[1], C = hash[2], D = hash[3];
+        for (size_t j = 0; j < 64; ++j)
+        {
+            uint32_t F;
+            int g;
+            if (j / 16 == 0)
+            {
+                F = F_MD5(B, C, D);
+                g = j;
+            }
+            else if (j / 16 == 1)
+            {
+                F = G_MD5(B, C, D);
+                g = (5 * j + 1) % 16;
+            }
+            else if (j / 16 == 2)
+            {
+                F = H_MD5(B, C, D);
+                g = (3 * j + 5) % 16;
+            }
+            else
+            {
+                F = I_MD5(B, C, D);
+                g = (7 * j) % 16;
+            }
 
+            uint32_t M = *(uint32_t*)&message[i * 64 + g * 4];
+            uint32_t K = get_K_md5()[j];
+            uint32_t S = get_shift_md5()[j];
+            F = F + A + M + K;
+            A = D;
+            D = C;
+            C = B;
+            B = B + rotate_left(F, S);
+        }
+        hash[0] += A;
+        hash[1] += B;
+        hash[2] += C;
+        hash[3] += D;
+    }
     free(message);
     return 1;
 }

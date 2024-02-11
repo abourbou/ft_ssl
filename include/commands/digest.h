@@ -30,6 +30,12 @@ void print_str_hash(uint8_t* hash, int len, char *algo, char *str, bool rev);
 void print_file_hash(uint8_t* hash, int len, char *algo, char *str, bool rev);
 
 // Digest commands
+
+// md5
+#define F_MD5(B,C,D) ((B & C) | (~B & D))
+#define G_MD5(B,C,D) ((B & D) | (C & ~D))
+#define H_MD5(B,C,D) (B ^ C ^ D)
+#define I_MD5(B,C,D) (C ^ (B | ~D))
 int exec_md5(void* options);
 
 #endif
