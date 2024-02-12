@@ -60,10 +60,10 @@ static char		**ft_complete(char **str, char const *s, char *del, int compt)
 	j = 0;
 	while (i < compt)
 	{
-		while (ft_strrchr(del, s[j]))
+		while (ft_strchr(del, s[j]))
 			j++;
 		start = j;
-		while (s[j] && !ft_strrchr(del, s[j]))
+		while (s[j] && !ft_strchr(del, s[j]))
 			j++;
 		end = j - 1;
 		if ((str[i] = malloc(end - start + 2)) == 0)
@@ -94,11 +94,11 @@ char			**ft_split_del(char const *s, char *del)
 		return (ft_zero(str));
 	while (s[i])
 	{
-		while (s[i] && ft_strrchr(del, s[i]))
+		while (s[i] && ft_strchr(del, s[i]))
 			i++;
 		if (s[i])
 			compt++;
-		while (s[i] && !ft_strrchr(del, s[i]))
+		while (s[i] && !ft_strchr(del, s[i]))
 			i++;
 	}
 	if ((str = ft_calloc(sizeof(char *) * (compt + 1), 1)) == 0)

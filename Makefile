@@ -33,7 +33,7 @@ PATH_LIBFT	=	./libft
 # Source
 SRC			=	$(addprefix $(PATH_SRC)/, \
 				ft_ssl.c ft_ssl_commands.c utils.c \
-				utils_crypto.c \
+				utils_crypto.c parsing.c \
 				$(addprefix commands/, help.c \
 					digest.c md5.c sha256.c) \
 				)

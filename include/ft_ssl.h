@@ -31,6 +31,8 @@ typedef struct s_command
 const t_command    *find_command(char *cmd_line);
 int                 process_command(int argc, char **argv);
 
-
+// Parsing
+int scan_stdin_for_cmd(char **cmd_line);
+char **split_cmd(char *cmd_line);
 
 #endif
