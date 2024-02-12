@@ -18,9 +18,12 @@ typedef struct s_digest_options {
     char **files;
 }   t_digest_options;
 
-// Parsing arguments
+typedef int(*digest_algo)(uint32_t *hash, int fd, char *str);
+
+// Digest functions
 int     parser_digest(char* cmd, int nbr_token, char **tokens, void **p_options);
 void    free_digest(void *options);
+int     exec_digest(void* options, digest_algo algo);
 
 // Print functions
 void print_hash(uint8_t* hash, int len);
@@ -28,8 +31,6 @@ void print_hash_newline(uint8_t* hash, int len);
 void print_stdin_hash(uint8_t* hash, int len, char *stdin);
 void print_str_hash(uint8_t* hash, int len, char *algo, char *str, bool rev);
 void print_file_hash(uint8_t* hash, int len, char *algo, char *str, bool rev);
-
-// Digest commands
 
 // md5
 #define MD5_BUFF_SIZE 1024 // Need to be at least 128
