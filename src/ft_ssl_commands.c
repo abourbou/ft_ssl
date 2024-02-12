@@ -10,6 +10,7 @@ static const t_command g_commands[] = {
 
     // Message digest commands
     {"md5", "digest", parser_digest, free_digest, exec_md5},
+    {"sha256", "digest", parser_digest, free_digest, exec_sha256},
     // Cipher commands
 };
 

@@ -12,7 +12,7 @@ void init_hash_md5(uint32_t *hash)
     hash[3] = init_hash[3];
 }
 
-size_t add_padding_and_lengths(char *message, size_t len_input, size_t total_length)
+static size_t add_padding_and_lengths(char *message, size_t len_input, size_t total_length)
 {
     // Add padding
     static char padding[64] = {0};
@@ -82,12 +82,7 @@ uint32_t* get_S_md5()
     return S;
 }
 
-uint32_t rotate_left(uint32_t x, uint32_t n)
-{
-    return (x << n) | (x >> (32 - n));
-}
-
-int    hash_md5(uint32_t *hash, char *message, size_t message_len)
+void    hash_md5(uint32_t *hash, char *message, size_t message_len)
 {
     // Break message into 512 bits chunks
     for (size_t i = 0; i < message_len / 64; ++i)
@@ -132,7 +127,6 @@ int    hash_md5(uint32_t *hash, char *message, size_t message_len)
         hash[2] += C;
         hash[3] += D;
     }
-    return 1;
 }
 
 // Compute md5 hash on the fd or the string

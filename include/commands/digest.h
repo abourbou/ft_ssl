@@ -5,10 +5,12 @@
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <byteswap.h>
 
 #include "stdbool.h"
 #include "libft_core.h"
 #include "utils.h"
+#include "utils_crypto.h"
 
 typedef struct s_digest_options {
     bool pass;
@@ -39,5 +41,9 @@ void print_file_hash(uint8_t* hash, int len, char *algo, char *str, bool rev);
 #define H_MD5(B,C,D) (B ^ C ^ D)
 #define I_MD5(B,C,D) (C ^ (B | ~D))
 int exec_md5(void* options);
+
+// sha256
+#define SHA256_BUFF_SIZE 1024 // Need to be at least 256
+int exec_sha256(void* options);
 
 #endif
