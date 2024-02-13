@@ -49,7 +49,7 @@ static	void	free_all(char **str)
 	free(str);
 }
 
-char			**ft_complete(char **str, char const *s, char *del, int compt)
+static char		**ft_complete(char **str, char const *s, char *del, int compt)
 {
 	int	i;
 	int j;

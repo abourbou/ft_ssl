@@ -6,7 +6,7 @@
 #    By: abourbou <abourbou@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/11 11:01:57 by abourbou          #+#    #+#              #
-#    Updated: 2024/02/03 21:45:56 by abourbou         ###   ########lyon.fr    #
+#    Updated: 2024/02/13 21:02:16 by abourbou         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -77,12 +77,12 @@ OBJ			=	$(addprefix $(PATH_OBJ)/, $(SRC:.c=.o))
 # Headers
 INCL_FILES 	=	libft.h get_next_line.h ft_printf.h libft_core.h
 
-INC			=	$(addprefix include/,$(INCL_FILES))
+INC			=	$(addprefix include/, $(INCL_FILES))
 
 # Rules
-all			:	$(NAME)
+all			:	$(NAME).a
 
-$(NAME)	:	$(OBJ) $(INC)
+$(NAME).a	:	$(OBJ) $(INC)
 	@ ar rcs $(NAME).a $(OBJ)
 	@ printf "\033[2K\r$(BLUE)$(NAME)$(RESET)$(BLUEE): $(ICONOK)library compiled [√]$(RESET)\n"
 

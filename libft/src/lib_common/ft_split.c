@@ -1,15 +1,15 @@
 /* ************************************************************************** */
-/*                                                          LE - /            */
-/*                                                              /             */
-/*   ft_split.c                                       .::    .:/ .      .::   */
-/*                                                 +:+:+   +:    +:  +:+:+    */
-/*   By: abourbou <abourbou@student.le-101.fr>      +:+   +:    +:    +:+     */
-/*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2019/10/09 11:44:27 by abourbou     #+#   ##    ##    #+#       */
-/*   Updated: 2020/02/03 13:45:41 by abourbou    ###    #+. /#+    ###.fr     */
-/*                                                         /                  */
-/*                                                        /                   */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_split.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abourbou <abourbou@student.42lyon.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/10/09 11:44:27 by abourbou          #+#    #+#             */
+/*   Updated: 2024/02/13 20:45:42 by abourbou         ###   ########lyon.fr   */
+/*                                                                            */
 /* ************************************************************************** */
+
 
 #include <stdlib.h>
 #include "../include/libft.h"
@@ -49,7 +49,7 @@ static	void	free_all(char **str)
 	free(str);
 }
 
-char			**ft_complete(char **str, char const *s, char c, int compt)
+static char		**ft_complete(char **str, char const *s, char c, int compt)
 {
 	int	i;
 	int j;
