@@ -123,22 +123,24 @@ void print_file_hash(uint8_t* hash, int len, char *algo, char *str, bool rev)
     ft_printf("\n");
 }
 
-
 // I/O for digest algorithms
-int exec_digest(void* options, digest_algo algo)
+int     exec_digest(void* options, digest_algo algo, size_t len_hash)
 {
     t_digest_options *digest_options = options;
-    uint32_t hash[4];
+    uint8_t *hash;
+
+    if (!(hash = malloc(len_hash * sizeof(uint8_t))))
+        return -1;
 
     // Read stdin if there is no arguments
     if (!digest_options->pass && !digest_options->str && !digest_options->files[0])
     {
         if (algo(hash, 0, NULL) == -1)
-            return -1;
+            return free_and_return(-1, hash);
 
-        digest_options->quiet   ? print_hash_newline((uint8_t*)hash, 16)
-                                : print_stdin_hash((uint8_t*)hash, 16, NULL);
-        return 1;
+        digest_options->quiet   ? print_hash_newline(hash, len_hash)
+                                : print_stdin_hash(hash, len_hash, NULL);
+        return free_and_return(1, hash);
     }
 
     // Pass option
@@ -146,15 +148,15 @@ int exec_digest(void* options, digest_algo algo)
     {
         char *stdin_buffer = scan_fd(0);
         if (!stdin_buffer)
-            return -1;
+            return free_and_return(-1, hash);
 
         if (algo(hash, -1, stdin_buffer) == -1)
-            return -1;
+            return free_and_return(-1, hash);
 
         if (digest_options->quiet && digest_options->pass)
             ft_printf("%s\n", stdin_buffer);
-        digest_options->quiet   ? print_hash_newline((uint8_t*)hash, 16)
-                                : print_stdin_hash((uint8_t*)hash, 16, stdin_buffer);
+        digest_options->quiet   ? print_hash_newline(hash, len_hash)
+                                : print_stdin_hash(hash, len_hash, stdin_buffer);
         free(stdin_buffer);
     }
 
@@ -162,11 +164,10 @@ int exec_digest(void* options, digest_algo algo)
     if (digest_options->str)
     {
         if (algo(hash, -1, digest_options->str) == -1)
-            return -1;
+            return free_and_return(-1, hash);
 
-        digest_options->quiet   ? print_hash_newline((uint8_t*)hash, 16)
-                                : print_str_hash((uint8_t*)hash, 16, "MD5", digest_options->str, digest_options->reverse);
-
+        digest_options->quiet   ? print_hash_newline(hash, len_hash)
+                                : print_str_hash(hash, len_hash, "MD5", digest_options->str, digest_options->reverse);
     }
 
     // Argument files
@@ -179,11 +180,13 @@ int exec_digest(void* options, digest_algo algo)
             ft_fprintf(2, "%s: %s\n", digest_options->files[i], strerror(errno));
             continue;
         }
-        algo(hash, fd, NULL);
+        if (algo(hash, fd, NULL) == -1)
+            return free_and_return(-1, hash);
 
-        digest_options->quiet   ? print_hash_newline((uint8_t*)hash, 16)
-                                : print_file_hash((uint8_t*)hash, 16, "MD5", digest_options->files[i], digest_options->reverse);
+        digest_options->quiet   ? print_hash_newline(hash, len_hash)
+                                : print_file_hash(hash, len_hash, "MD5", digest_options->files[i], digest_options->reverse);
     }
 
+    free(hash);
     return 1;
 }

@@ -136,9 +136,9 @@ int    hash_md5(uint32_t *hash, char *message, size_t message_len)
 }
 
 // Compute md5 hash on the fd or the string
-int algo_md5(uint32_t *hash, int fd, char *str)
+int algo_md5(uint8_t *hash, int fd, char *str)
 {
-    init_hash_md5(hash);
+    init_hash_md5((uint32_t*)hash);
     char buffer[MD5_BUFF_SIZE];
     size_t total_length = 0;
 
@@ -151,7 +151,7 @@ int algo_md5(uint32_t *hash, int fd, char *str)
             return -1;
         ft_memcpy(str_with_padding, str, length_message);
         length_message = add_padding_and_lengths(str_with_padding, length_message, length_message);
-        hash_md5(hash, str_with_padding, length_message);
+        hash_md5((uint32_t*)hash, str_with_padding, length_message);
         free(str_with_padding);
         return 1;
     }
@@ -167,15 +167,15 @@ int algo_md5(uint32_t *hash, int fd, char *str)
         if (length_message < MD5_BUFF_SIZE - 64)
         {
             length_message = add_padding_and_lengths(buffer, length_message, total_length);
-            hash_md5(hash, buffer, length_message);
+            hash_md5((uint32_t*)hash, buffer, length_message);
             return 1;
         }
 
-        hash_md5(hash, buffer, length_message);
+        hash_md5((uint32_t*)hash, buffer, length_message);
     }
 }
 
 int exec_md5(void* options)
 {
-    return exec_digest(options, algo_md5);
+    return exec_digest(options, algo_md5, 16);
 }
