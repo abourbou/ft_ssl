@@ -12,5 +12,6 @@ typedef struct s_help_options {
 int     parser_help(char *cmd, int nbr_token, char **tokens, void **options);
 void    free_help(void *options);
 int     exec_help(void* options);
+void    print_help_for_help(void);
 
 #endif

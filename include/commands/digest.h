@@ -26,6 +26,7 @@ typedef int(*digest_algo)(uint8_t *hash, int fd, char *str);
 int     parser_digest(char* cmd, int nbr_token, char **tokens, void **p_options);
 void    free_digest(void *options);
 int     exec_digest(void* options, digest_algo algo, size_t len_hash);
+void    digest_print_help(char *name_algo);
 
 // Print functions
 void print_hash(uint8_t* hash, int len);
@@ -40,10 +41,12 @@ void print_file_hash(uint8_t* hash, int len, char *algo, char *str, bool rev);
 #define G_MD5(B,C,D) ((B & D) | (C & ~D))
 #define H_MD5(B,C,D) (B ^ C ^ D)
 #define I_MD5(B,C,D) (C ^ (B | ~D))
-int exec_md5(void* options);
+int     exec_md5(void* options);
+void    print_help_md5(void);
 
 // sha256
 #define SHA256_BUFF_SIZE 1024 // Need to be at least 256
 int exec_sha256(void* options);
+void print_help_sha256(void);
 
 #endif

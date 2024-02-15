@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     {
         ret_val = process_command(argc - 1, &argv[1]);
         if (ret_val == -1)
-            ERROR_PRINT(-1, "Memory allocation failed in %s\n", argv[1])
+            ERROR_PRINT(-1, "Error: Memory allocation failed in %s\n", argv[1])
         else if (ret_val == 0)
             ft_fprintf(2, "error in %s\n", argv[1]);
         return (!ret_val);
@@ -62,7 +62,7 @@ int main(int argc, char **argv)
         if (ret_val == -1)
         {
             free_entries(&cmd_line, &cmd_split);
-            ERROR_PRINT(-1, "Memory allocation failed during execution\n");
+            ERROR_PRINT(-1, "Error: Memory allocation failed during execution\n");
         }
         else if (ret_val == 0)
             ft_fprintf(2, "error in %s\n", cmd_split[0]);

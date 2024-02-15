@@ -190,3 +190,14 @@ int     exec_digest(void* options, digest_algo algo, size_t len_hash)
     free(hash);
     return 1;
 }
+
+// Generic print help message for the digest algorithms
+void digest_print_help(char *name_algo)
+{
+    ft_printf("Usage:  %s [options] [file...]\n", name_algo);
+    ft_printf("%-15s Display this summary\n", "--help");
+    ft_printf("%-15s Echo stdin to stdout and compute stdin hash \n", "-p");
+    ft_printf("%-15s Quiet mode\n", "-q");
+    ft_printf("%-15s Reverse print mode\n", "-r");
+    ft_printf("%-15s Compute hash for a string\n", "-s [string]");
+}

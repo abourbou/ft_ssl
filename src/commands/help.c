@@ -31,27 +31,29 @@ void    free_help(void *options)
     free(t_options);
 }
 
+void    print_help_for_help(void)
+{
+        ft_printf("Print informations about the commands\n"
+                  "Usage: help [command]\n"
+                  "\t--help  Display this summary\n");
+}
+
 int     exec_help(void* options)
 {
     t_help_options* t_options = options;
 
     if (!t_options->cmd)
     {
-        ft_printf("TODO List commands\n");
-        //TODO Print list commands of g_commands
+        print_commands();
         return 1;
     }
 
-    // One argument
-    if (!ft_strcmp(t_options->cmd, "--help") ||
-        !ft_strcmp(t_options->cmd, "-h"))
+    const t_command *cmd = find_command(t_options->cmd);
+    if (!cmd)
     {
-        ft_printf("Print informations about the commands\n"
-                  "Usage: help [command]\n"
-                  "\t--help  Display this summary\n");
+        ft_fprintf(2, "Error : Invalid command %s\nType \"help\" for a list\n", t_options->cmd);
         return 1;
     }
-
-    char* argv[2] = {t_options->cmd, "--help"};
-    return process_command(2, argv);
+    cmd->print_help_msg();
+    return 1;
 }

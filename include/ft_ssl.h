@@ -14,6 +14,9 @@ typedef void(*options_free_fct)(void *options);
 // Execute the command with options
 typedef int(*cmd_exec_fct)(void* options);
 
+// Print the help message of the command
+typedef void(*print_help_fct)(void);
+
 typedef struct s_command
 {
     // Command description
@@ -24,11 +27,13 @@ typedef struct s_command
     token_parser_fct    parse_token;
     options_free_fct    free_options;
     cmd_exec_fct        exec_cmd;
+    print_help_fct      print_help_msg;
 
 } t_command;
 
+void                print_commands(void);
 // Return the index of the command or -1 if not found
-const t_command    *find_command(char *cmd_line);
+const t_command     *find_command(char *cmd_line);
 int                 process_command(int argc, char **argv);
 
 // Parsing

@@ -173,3 +173,8 @@ int exec_md5(void* options)
 {
     return exec_digest(options, algo_md5, 16);
 }
+
+void print_help_md5(void)
+{
+    digest_print_help("md5");
+}

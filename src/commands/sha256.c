@@ -151,3 +151,8 @@ int exec_sha256(void* options)
 {
     return exec_digest(options, algo_sha256, 32);
 }
+
+void print_help_sha256(void)
+{
+    digest_print_help("sha256");
+}
