@@ -58,13 +58,13 @@ char *scan_fd(int fd)
     }
 }
 
-void    print_memory_bin(void *data, size_t len)
+void    print_memory_bin_LE(void *data, size_t len)
 {
-    char *cdata = data;
+    unsigned char *cdata = data;
     for (size_t i = 0; i < len; ++i)
     {
         for (int j = 7; j >= 0; --j)
-            ft_printf("%x", cdata[i] >> j & 1);
+            ft_printf("%x", (cdata[i] >> j) & 1);
         ft_printf(" ");
         if (i && i % 8 == 7)
             ft_printf("\n");
@@ -72,12 +72,40 @@ void    print_memory_bin(void *data, size_t len)
     ft_printf("\n");
 }
 
-void    print_memory_hex(void *data, size_t len)
+void    print_memory_hex_LE(void *data, size_t len)
 {
     unsigned char *cdata = data;
     for (size_t i = 0; i < len; ++i)
     {
         ft_printf("%02x ", cdata[i]);
+        if (i && i % 16 == 15)
+            ft_printf("\n");
+    }
+    ft_printf("\n");
+}
+
+void    print_memory_bin_BE(void *data, size_t len)
+{
+    unsigned char *cdata = data;
+    for (size_t i = 0; i < len; ++i)
+    {
+        size_t BE_i = len - i - 1;
+        for (int j = 7; j >= 0; --j)
+            ft_printf("%x", (cdata[BE_i] >> j) & 1);
+        ft_printf(" ");
+        if (i && i % 8 == 7)
+            ft_printf("\n");
+    }
+    ft_printf("\n");
+}
+
+void    print_memory_hex_BE(void *data, size_t len)
+{
+    unsigned char *cdata = data;
+    for (size_t i = 0; i < len; ++i)
+    {
+        size_t BE_i = len - i - 1;
+        ft_printf("%02x ", cdata[BE_i]);
         if (i && i % 16 == 15)
             ft_printf("\n");
     }
