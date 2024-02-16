@@ -51,8 +51,7 @@ void    hash_sha256(uint32_t *hash, char *message, size_t message_len)
         uint32_t W[64] = {0};
         ft_memcpy(W, &message[nbr_chunk * 64], 64);
         // Convert LE to BE because SHA256 algorithm is on BE
-        for (int i = 0; i < 64; ++i)
-            W[i] = bswap_32(W[i]);
+        swap_32bits(W, 64);
 
         for (int i = 16; i < 64; ++i)
         {
@@ -96,16 +95,6 @@ void    hash_sha256(uint32_t *hash, char *message, size_t message_len)
     }
 }
 
-// Convert final hash to little endian
-static void convertion_LE(void *hash)
-{
-    for (int i = 0; i < 8; ++i)
-    {
-        uint32_t *p_hash =(uint32_t*)hash + i;
-        *p_hash = bswap_32(*p_hash);
-    }
-}
-
 // Compute sha256 hash on the fd or the string
 int algo_sha256(uint8_t *hash, int fd, char *str)
 {
@@ -123,7 +112,7 @@ int algo_sha256(uint8_t *hash, int fd, char *str)
         ft_memcpy(str_with_padding, str, length_message);
         length_message = add_padding_and_lengths(str_with_padding, length_message, length_message);
         hash_sha256((uint32_t*)hash, str_with_padding, length_message);
-        convertion_LE(hash);
+        swap_32bits(hash, 8);
         free(str_with_padding);
         return 1;
     }
@@ -140,7 +129,7 @@ int algo_sha256(uint8_t *hash, int fd, char *str)
         {
             length_message = add_padding_and_lengths(buffer, length_message, total_length);
             hash_sha256((uint32_t*)hash, buffer, length_message);
-            convertion_LE(hash);
+            swap_32bits(hash, 8);
             return 1;
         }
         hash_sha256((uint32_t*)hash, buffer, length_message);
