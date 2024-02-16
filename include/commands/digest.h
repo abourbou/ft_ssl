@@ -49,4 +49,9 @@ void    print_help_md5(void);
 int exec_sha256(void* options);
 void print_help_sha256(void);
 
+// whirlpool
+#define WHIRLPOOL_BUFF_SIZE 1024 // Need to be at least 256
+int exec_whirlpool(void* options);
+void print_help_whirlpool(void);
+
 #endif
