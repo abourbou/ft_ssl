@@ -141,7 +141,7 @@ int algo_md5(uint8_t *hash, int fd, char *str)
     {
         int length_message = ft_strlen(str);
         char *str_with_padding;
-        if (!(str_with_padding = malloc(length_message + 64)))
+        if (!(str_with_padding = malloc(length_message + 128)))
             return -1;
         ft_memcpy(str_with_padding, str, length_message);
         length_message = add_padding_and_lengths(str_with_padding, length_message, length_message);
@@ -153,12 +153,12 @@ int algo_md5(uint8_t *hash, int fd, char *str)
     // Fd case : Split the input by blocks
     while (1)
     {
-        int length_message = read(fd, buffer, MD5_BUFF_SIZE - 64);
+        int length_message = read(fd, buffer, MD5_BUFF_SIZE - 128);
         if (length_message < 0)
             return -1;
         total_length += length_message;
 
-        if (length_message < MD5_BUFF_SIZE - 64)
+        if (length_message < MD5_BUFF_SIZE - 128)
         {
             length_message = add_padding_and_lengths(buffer, length_message, total_length);
             hash_md5((uint32_t*)hash, buffer, length_message);

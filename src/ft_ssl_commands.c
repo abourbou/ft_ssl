@@ -53,7 +53,7 @@ int process_command(int argc, char **argv)
 {
     const t_command *cmd = find_command(argv[0]);
     if (!cmd)
-        ERROR_PRINT(0, "Invalid command '%s'. "
+        ERROR_PRINT(1, "Invalid command '%s'. "
                        "Type \"help\" for a list of available commands.\n",
                        argv[0])
 

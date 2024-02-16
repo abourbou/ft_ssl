@@ -36,7 +36,7 @@ void print_str_hash(uint8_t* hash, int len, char *algo, char *str, bool rev);
 void print_file_hash(uint8_t* hash, int len, char *algo, char *str, bool rev);
 
 // md5
-#define MD5_BUFF_SIZE 1024 // Need to be at least 128
+#define MD5_BUFF_SIZE 1024 // Need to be at least 256
 #define F_MD5(B,C,D) ((B & C) | (~B & D))
 #define G_MD5(B,C,D) ((B & D) | (C & ~D))
 #define H_MD5(B,C,D) (B ^ C ^ D)
