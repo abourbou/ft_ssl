@@ -53,5 +53,7 @@ void print_help_sha256(void);
 #define WHIRLPOOL_BUFF_SIZE 1024 // Need to be at least 256
 int exec_whirlpool(void* options);
 void print_help_whirlpool(void);
+const uint64_t *get_C_whirlpool(int i);
+const uint64_t *get_rc_whirlpool();
 
 #endif

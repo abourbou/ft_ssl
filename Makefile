@@ -35,7 +35,7 @@ SRC			=	$(addprefix $(PATH_SRC)/, \
 				ft_ssl.c ft_ssl_commands.c utils.c \
 				utils_crypto.c parsing.c \
 				$(addprefix commands/, help.c \
-					digest.c md5.c sha256.c whirlpool.c) \
+					digest.c md5.c sha256.c whirlpool.c whirlpool_consts.c) \
 				)
 
 OBJ			=	$(addprefix $(PATH_OBJ)/, $(SRC:.c=.o))

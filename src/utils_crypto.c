@@ -19,3 +19,12 @@ void swap_32bits(void *content, size_t len)
         *p_block_32bits = bswap_32(*p_block_32bits);
     }
 }
+
+void swap_64bits(void *content, size_t len)
+{
+    for (size_t i = 0; i < len; ++i)
+    {
+        uint64_t *p_block_64bits =(uint64_t*)content + i;
+        *p_block_64bits = bswap_64(*p_block_64bits);
+    }
+}
