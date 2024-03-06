@@ -78,7 +78,7 @@ int algo_whirlpool(uint8_t *hash, int fd, char *str)
 
 int exec_whirlpool(void* options)
 {
-    return exec_digest(options, algo_whirlpool, 64);
+    return exec_digest("WHIRLPOOL", options, algo_whirlpool, 64);
 }
 
 void print_help_whirlpool(void)

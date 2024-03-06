@@ -124,7 +124,7 @@ void print_file_hash(uint8_t* hash, int len, char *algo, char *str, bool rev)
 }
 
 // I/O for digest algorithms
-int     exec_digest(void* options, digest_algo algo, size_t len_hash)
+int     exec_digest(char *name_algo, void* options, digest_algo algo, size_t len_hash)
 {
     t_digest_options *digest_options = options;
     uint8_t *hash;
@@ -167,7 +167,7 @@ int     exec_digest(void* options, digest_algo algo, size_t len_hash)
             return free_and_return(-1, hash);
 
         digest_options->quiet   ? print_hash_newline(hash, len_hash)
-                                : print_str_hash(hash, len_hash, "MD5", digest_options->str, digest_options->reverse);
+                                : print_str_hash(hash, len_hash, name_algo, digest_options->str, digest_options->reverse);
     }
 
     // Argument files
@@ -184,7 +184,7 @@ int     exec_digest(void* options, digest_algo algo, size_t len_hash)
             return free_and_return(-1, hash);
 
         digest_options->quiet   ? print_hash_newline(hash, len_hash)
-                                : print_file_hash(hash, len_hash, "MD5", digest_options->files[i], digest_options->reverse);
+                                : print_file_hash(hash, len_hash, name_algo, digest_options->files[i], digest_options->reverse);
     }
 
     free(hash);

@@ -25,7 +25,7 @@ typedef int(*digest_algo)(uint8_t *hash, int fd, char *str);
 // Digest functions
 int     parser_digest(char* cmd, int nbr_token, char **tokens, void **p_options);
 void    free_digest(void *options);
-int     exec_digest(void* options, digest_algo algo, size_t len_hash);
+int     exec_digest(char *name_algo, void* options, digest_algo algo, size_t len_hash);
 void    digest_print_help(char *name_algo);
 
 // Print functions

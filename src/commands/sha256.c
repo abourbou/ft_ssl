@@ -138,7 +138,7 @@ int algo_sha256(uint8_t *hash, int fd, char *str)
 
 int exec_sha256(void* options)
 {
-    return exec_digest(options, algo_sha256, 32);
+    return exec_digest("SHA256", options, algo_sha256, 32);
 }
 
 void print_help_sha256(void)

@@ -171,7 +171,7 @@ int algo_md5(uint8_t *hash, int fd, char *str)
 
 int exec_md5(void* options)
 {
-    return exec_digest(options, algo_md5, 16);
+    return exec_digest("MD5", options, algo_md5, 16);
 }
 
 void print_help_md5(void)
