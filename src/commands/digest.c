@@ -25,7 +25,7 @@ int     parser_digest(char *cmd, int nbr_token, char **tokens, void **p_options)
             options->pass = true;
         else if (!ft_strcmp(tokens[i], "-q") && !options->quiet)
             options->quiet = true;
-        else if (!ft_strcmp(tokens[i], "-r") && !options->quiet)
+        else if (!ft_strcmp(tokens[i], "-r") && !options->reverse)
             options->reverse = true;
         else if (!ft_strcmp(tokens[i], "-s") && !options->str)
         {
@@ -118,9 +118,18 @@ void print_file_hash(uint8_t* hash, int len, char *algo, char *str, bool rev)
     if (rev)
     {
         print_hash(hash, len);
-        ft_printf(" %s", algo);
+        ft_printf(" %s", str);
     }
     ft_printf("\n");
+}
+
+static void stop_to_first_new_line(char *str)
+{
+    int i = 0;
+    while (str[i] && str[i] != '\n')
+        ++i;
+    if (str[i])
+        str[i] = 0;
 }
 
 // I/O for digest algorithms
@@ -135,7 +144,11 @@ int     exec_digest(char *name_algo, void* options, digest_algo algo, size_t len
     // Read stdin if there is no arguments
     if (!digest_options->pass && !digest_options->str && !digest_options->files[0])
     {
-        if (algo(hash, 0, NULL) == -1)
+        char *stdin_buffer = scan_fd(0);
+        if (!stdin_buffer)
+            return free_and_return(-1, hash);
+
+        if (algo(hash, -1, stdin_buffer) == -1)
             return free_and_return(-1, hash);
 
         digest_options->quiet   ? print_hash_newline(hash, len_hash)
@@ -155,6 +168,7 @@ int     exec_digest(char *name_algo, void* options, digest_algo algo, size_t len
 
         if (digest_options->quiet && digest_options->pass)
             ft_printf("%s\n", stdin_buffer);
+        stop_to_first_new_line(stdin_buffer);
         digest_options->quiet   ? print_hash_newline(hash, len_hash)
                                 : print_stdin_hash(hash, len_hash, stdin_buffer);
         free(stdin_buffer);
@@ -177,7 +191,7 @@ int     exec_digest(char *name_algo, void* options, digest_algo algo, size_t len
     {
         if ((fd = open(digest_options->files[i], O_RDONLY)) == -1)
         {
-            ft_fprintf(2, "%s: %s\n", digest_options->files[i], strerror(errno));
+            ft_fprintf(2, "%s %s: %s\n", name_algo, digest_options->files[i], strerror(errno));
             continue;
         }
         if (algo(hash, fd, NULL) == -1)

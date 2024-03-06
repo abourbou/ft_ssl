@@ -6,7 +6,7 @@
 int keep_getting_entry(char **line)
 {
     int i = ft_strlen(*line) - 1;
-    while (i >= 0 && strrchr(WHITE_SPACE, (*line)[i]))
+    while (i >= 0 && ft_strrchr(WHITE_SPACE, (*line)[i]))
         i--;
     if (i > 0 && (*line)[i] == '\\')
     {
@@ -109,7 +109,7 @@ char **split_cmd(char *cmd_line)
 {
     size_t len = get_nbr_cmd(cmd_line);
     char **cmd_split;
-    if (!(cmd_split = ft_calloc(len + 1, sizeof(char*))))
+    if (!(cmd_split = ft_calloc(len + 2, sizeof(char*))))
         return 0;
 
     int i = 0;
@@ -156,7 +156,7 @@ char **split_cmd(char *cmd_line)
     // Erase quotes
     for (size_t i = 0; i < len; ++i)
     {
-        if (cmd_split[i][0] == '\'' || cmd_split[i][0] == '\"')
+        if (ft_strlen(cmd_split[i]) > 1 && (cmd_split[i][0] == '\'' || cmd_split[i][0] == '\"'))
         {
             size_t len_token  = ft_strlen(cmd_split[i]);
             ft_memcpy(cmd_split[i], cmd_split[i] + 1, len_token - 2);
