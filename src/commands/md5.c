@@ -12,7 +12,7 @@ void init_hash_md5(uint32_t *hash)
     hash[3] = init_hash[3];
 }
 
-static size_t add_padding_and_lengths(char *message, size_t len_input, size_t total_length)
+static size_t add_padding_md5(char *message, size_t len_input, size_t total_length)
 {
     // Add padding
     static char padding[64] = {0};
@@ -82,8 +82,9 @@ uint32_t* get_S_md5()
     return S;
 }
 
-void    hash_md5(uint32_t *hash, char *message, size_t message_len)
+void    hash_md5(void *vhash, char *message, size_t message_len)
 {
+    uint32_t *hash = vhash;
     // Break message into 512 bits chunks
     for (size_t i = 0; i < message_len / 64; ++i)
     {
@@ -129,44 +130,23 @@ void    hash_md5(uint32_t *hash, char *message, size_t message_len)
     }
 }
 
+static void post_process_md5(void *vhash)
+{
+    (void)vhash;
+}
+
 // Compute md5 hash on the fd or the string
 int algo_md5(uint8_t *hash, int fd, char *str)
 {
     init_hash_md5((uint32_t*)hash);
-    char buffer[MD5_BUFF_SIZE];
-    size_t total_length = 0;
 
     // String case
     if (str)
-    {
-        int length_message = ft_strlen(str);
-        char *str_with_padding;
-        if (!(str_with_padding = malloc(length_message + 128)))
-            return -1;
-        ft_memcpy(str_with_padding, str, length_message);
-        length_message = add_padding_and_lengths(str_with_padding, length_message, length_message);
-        hash_md5((uint32_t*)hash, str_with_padding, length_message);
-        free(str_with_padding);
-        return 1;
-    }
-
-    // Fd case : Split the input by blocks
-    while (1)
-    {
-        int length_message = read(fd, buffer, MD5_BUFF_SIZE - 128);
-        if (length_message < 0)
-            return -1;
-        total_length += length_message;
-
-        if (length_message < MD5_BUFF_SIZE - 128)
-        {
-            length_message = add_padding_and_lengths(buffer, length_message, total_length);
-            hash_md5((uint32_t*)hash, buffer, length_message);
-            return 1;
-        }
-
-        hash_md5((uint32_t*)hash, buffer, length_message);
-    }
+        return digest_hash_str(hash, str, add_padding_md5,
+                                hash_md5, post_process_md5);
+    else
+        return digest_hash_fd(hash, fd, add_padding_md5,
+                                hash_md5, post_process_md5);
 }
 
 int exec_md5(void* options)

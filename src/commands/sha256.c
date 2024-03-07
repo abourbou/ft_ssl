@@ -1,7 +1,7 @@
 
 #include "digest.h"
 
-void init_hash_sha256(uint32_t *hash)
+static void init_hash_sha256(uint32_t *hash)
 {
     static const uint32_t init_hash[8] = {0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
                                           0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
@@ -10,7 +10,7 @@ void init_hash_sha256(uint32_t *hash)
         hash[i] = init_hash[i];
 }
 
-static size_t add_padding_and_lengths(char *message, size_t len_input, size_t total_length)
+static size_t add_padding_sha256(char *message, size_t len_input, size_t total_length)
 {
     // Add padding
     static char padding[64] = {0};
@@ -44,8 +44,9 @@ static uint32_t* get_K_sha256(void)
     return K;
 }
 
-void    hash_sha256(uint32_t *hash, char *message, size_t message_len)
+static void    hash_sha256(void *vhash, char *message, size_t message_len)
 {
+    uint32_t *hash = vhash;
     for (size_t nbr_chunk = 0; nbr_chunk < message_len / 64; ++nbr_chunk)
     {
         uint32_t W[64] = {0};
@@ -95,45 +96,25 @@ void    hash_sha256(uint32_t *hash, char *message, size_t message_len)
     }
 }
 
+// Convert to big endian
+static void post_process_sha256(void *vhash)
+{
+    uint8_t *hash = vhash;
+    swap_32bits(hash, 8);
+}
+
 // Compute sha256 hash on the fd or the string
 int algo_sha256(uint8_t *hash, int fd, char *str)
 {
     init_hash_sha256((uint32_t*)hash);
-    char buffer[SHA256_BUFF_SIZE];
-    size_t total_length = 0;
 
     // String case
     if (str)
-    {
-        int length_message = ft_strlen(str);
-        char *str_with_padding;
-        if (!(str_with_padding = malloc(length_message + 128)))
-            return -1;
-        ft_memcpy(str_with_padding, str, length_message);
-        length_message = add_padding_and_lengths(str_with_padding, length_message, length_message);
-        hash_sha256((uint32_t*)hash, str_with_padding, length_message);
-        swap_32bits(hash, 8);
-        free(str_with_padding);
-        return 1;
-    }
-
-    // Fd case : Split the input by blocks
-    while (1)
-    {
-        int length_message = read(fd, buffer, SHA256_BUFF_SIZE - 128);
-        if (length_message < 0)
-            return -1;
-        total_length += length_message;
-
-        if (length_message < SHA256_BUFF_SIZE - 128)
-        {
-            length_message = add_padding_and_lengths(buffer, length_message, total_length);
-            hash_sha256((uint32_t*)hash, buffer, length_message);
-            swap_32bits(hash, 8);
-            return 1;
-        }
-        hash_sha256((uint32_t*)hash, buffer, length_message);
-    }
+        return digest_hash_str(hash, str, add_padding_sha256,
+                                hash_sha256, post_process_sha256);
+    else // Fd case
+        return digest_hash_fd(hash, fd, add_padding_sha256,
+                                hash_sha256, post_process_sha256);
 }
 
 int exec_sha256(void* options)
