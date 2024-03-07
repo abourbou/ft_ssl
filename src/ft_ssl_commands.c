@@ -12,8 +12,6 @@ static const t_command g_commands[] = {
     {"md5", "digest", parser_digest, free_digest, exec_md5, print_help_md5},
     {"sha256", "digest", parser_digest, free_digest, exec_sha256, print_help_sha256},
     {"whirlpool", "digest", parser_digest, free_digest, exec_whirlpool, print_help_whirlpool},
-
-    // Cipher commands
 };
 
 void    print_group_command(char *group_title, char *group_name)
@@ -37,6 +35,7 @@ void    print_group_command(char *group_title, char *group_name)
 
 void                print_commands(void)
 {
+    ft_printf("ft_ssl is a program with basic cryptographic functions and utilities.\n\n");
     print_group_command("Standard commands:", "command");
     print_group_command("Message Digest commands:", "digest");
 }
@@ -53,6 +52,12 @@ const t_command    *find_command(char *cmd_line)
 
 int process_command(int argc, char **argv)
 {
+    if (!ft_strcmp(argv[0], "--help") || !ft_strcmp(argv[0], "-h"))
+    {
+        print_commands();
+        return 1;
+    }
+
     const t_command *cmd = find_command(argv[0]);
     if (!cmd)
         ERROR_PRINT(1, "Invalid command '%s'. "

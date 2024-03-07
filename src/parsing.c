@@ -28,7 +28,7 @@ int keep_getting_entry(char **line)
 // Return -1 if good, 0 if finished and >=0 if there is an error
 int scan_stdin_for_cmd(char **cmd_line)
 {
-    ft_printf("ft_OpenSSL> ");
+    ft_printf("ft_ssl> ");
     int get_more_line = 0;
     int ret_gnl;
     char *current_line;
